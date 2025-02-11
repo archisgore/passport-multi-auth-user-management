@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
     <header>
         <h1>User Profile</h1>
@@ -16,8 +18,10 @@
     </header>
     <main>
         <h2>Welcome, <%= user.name %>!</h2>
-        <p>Email: <%= user.email %></p>
-        <p>Joined on: <%= user.created_at.toLocaleDateString() %></p>
+        <p>Email: <%= user.email %>
+        </p>
+        <p>Joined on: <%= user.created_at.toLocaleDateString() %>
+        </p>
         <a href="/user/profile/delete" class="btn">Delete Profile</a>
         <a href="/user/change-password" class="btn">Reset Password</a>
     </main>
@@ -25,4 +29,5 @@
         <p>&copy; <%= new Date().getFullYear() %> Your Application Name</p>
     </footer>
 </body>
+
 </html>
