@@ -1,28 +1,29 @@
-import express from 'express';
-import authController from '../controllers/authController.js';
+import express from "express";
+import authController from "../controllers/authController.js";
 
 const router = express.Router();
 
+// APIs
 // Signup route
-router.post('/signup', authController.signup);
+router.post("/signup", authController.signup);
 
 // Login route
-router.post('/login', authController.login);
+router.post("/login", authController.login);
+
+// Render login page
+router.get("/login", authController.renderLogin);
 
 // Password reset form route
-router.get('/forgot-password', authController.renderForgotPassword);
-// Password reset request route
-router.post('/forgot-password', authController.forgotPassword);
+router.get("/forgot-password", authController.renderForgotPassword);
+// Forgot password email form
+router.post("/forgot-password", authController.forgotPassword);
 
 // Password reset form route
-router.get('/reset-password/:token', authController.renderResetPassword);
+router.get("/reset-password/:token", authController.renderResetPassword);
 // Password reset route
-router.post('/reset-password/:token', authController.resetPassword);
+router.post("/reset-password/:token", authController.resetPassword);
 
-// Password change route
-router.post('/change-password', authController.changePassword);
-
-// Logout route
-router.get('/logout', authController.logout);
+// Views
+router.get("/signup", authController.renderSignup);
 
 export default router;

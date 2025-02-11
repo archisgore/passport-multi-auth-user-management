@@ -11,15 +11,15 @@
         <h1>User Profile</h1>
         <nav>
             <a href="/">Home</a>
-            <a href="/logout">Logout</a>
+            <a href="/user/logout">Logout</a>
         </nav>
     </header>
     <main>
         <h2>Welcome, <%= user.name %>!</h2>
         <p>Email: <%= user.email %></p>
-        <p>Joined on: <%= user.createdAt.toLocaleDateString() %></p>
-        <a href="/profile/delete" class="btn">Delete Profile</a>
-        <a href="/change-password" class="btn">Reset Password</a>
+        <p>Joined on: <%= user.created_at.toLocaleDateString() %></p>
+        <a href="/user/profile/delete" class="btn">Delete Profile</a>
+        <a href="/user/change-password" class="btn">Reset Password</a>
     </main>
     <footer>
         <p>&copy; <%= new Date().getFullYear() %> Your Application Name</p>

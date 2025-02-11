@@ -4,7 +4,8 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -21,5 +22,8 @@
     "passport-local": "^1.0.0",
     "passport-magic-link": "^2.1.1",
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.0"
   }
 }
