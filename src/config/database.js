@@ -1,16 +1,15 @@
-import pg from "pg";
-const { Pool } = pg;
+import pg from 'pg'
+const { Pool } = pg
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL
 const pool = new Pool({
-  connectionString,
-});
+    connectionString,
+})
 
-pool
-  .connect()
-  .then(() => console.log("Connected to database"))
-  .catch((err) => {
-    throw new Error(`Error connecting to database ${err.stack}`);
-  });
+pool.connect()
+    .then(() => console.log('Connected to database'))
+    .catch((err) => {
+        throw new Error(`Error connecting to database ${err.stack}`)
+    })
 
-export default pool;
+export default pool

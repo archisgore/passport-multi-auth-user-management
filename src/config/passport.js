@@ -1,68 +1,75 @@
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as FacebookStrategy } from "passport-facebook";
-import { Strategy as AppleStrategy } from "passport-apple";
-import { Strategy as MagicLinkStrategy } from "passport-magic-link";
-import User from "../models/user.js";
-import bcrypt from "bcrypt";
+import { Strategy as LocalStrategy } from 'passport-local'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
+import { Strategy as FacebookStrategy } from 'passport-facebook'
+import { Strategy as AppleStrategy } from 'passport-apple'
+import { Strategy as MagicLinkStrategy } from 'passport-magic-link'
+import User from '../models/user.js'
+import bcrypt from 'bcrypt'
 
 function passportConfig(passport) {
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+    passport.serializeUser((user, done) => {
+        done(null, user.id)
+    })
 
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch (error) {
-      done(error);
-    }
-  });
-
-  passport.use(
-    new LocalStrategy(
-      {
-        usernameField: "email",
-      },
-      async (email, password, done) => {
+    passport.deserializeUser(async (id, done) => {
         try {
-          const user = await User.findOne({ email });
-          if (!user) {
-            return done(null, false, { message: "Incorrect email." });
-          }
-          const isMatch = await bcrypt.compare(password, user.password);
-          if (!isMatch) {
-            return done(null, false, { message: "Incorrect password." });
-          }
-          return done(null, user);
+            const user = await User.findById(id)
+            done(null, user)
         } catch (error) {
-          return done(error);
+            done(error)
         }
-      },
-    ),
-  );
+    })
 
-  passport.use(
-    new MagicLinkStrategy(
-      {
-        secret: "my-secret",
-        userFields: ["email"],
-        tokenField: "token",
-      },
-      (user, token) => {
-        return MailService.sendMail({
-          to: user.email,
-          token,
-        });
-      },
-      (user) => {
-        return User.findByEmail(user.email);
-      },
-    ),
-  );
+    passport.use(
+        new LocalStrategy(
+            {
+                usernameField: 'email',
+            },
+            async (email, password, done) => {
+                try {
+                    const user = await User.findOne({ email })
+                    if (!user) {
+                        return done(null, false, {
+                            message: 'Incorrect email.',
+                        })
+                    }
+                    const isMatch = await bcrypt.compare(
+                        password,
+                        user.password
+                    )
+                    if (!isMatch) {
+                        return done(null, false, {
+                            message: 'Incorrect password.',
+                        })
+                    }
+                    return done(null, user)
+                } catch (error) {
+                    return done(error)
+                }
+            }
+        )
+    )
 
-  /*
+    passport.use(
+        new MagicLinkStrategy(
+            {
+                secret: 'my-secret',
+                userFields: ['email'],
+                tokenField: 'token',
+            },
+            (user, token) => {
+                return MailService.sendMail({
+                    to: user.email,
+                    token,
+                })
+            },
+            (user) => {
+                return User.findByEmail(user.email)
+            }
+        )
+    )
+
+    /*
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -131,4 +138,4 @@ function passportConfig(passport) {
   */
 }
 
-export default passportConfig;
+export default passportConfig

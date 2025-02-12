@@ -25,27 +25,30 @@ This app stores hashed passwords in a simple flat database. This is not remotely
 - EJS (Embedded JavaScript templating)
 
 ## Initialize Database
+
 Run commands from `initdb.sql` in your PostgreSQL instance to get all the tables this app requires.
 
 ## Installation
 
 1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd passport-app
-   ```
+
+    ```
+    git clone <repository-url>
+    cd passport-app
+    ```
 
 2. Install dependencies:
-   ```
-   npm install
-   ```
+
+    ```
+    npm install
+    ```
 
 3. Modify the `.env` file in the root directory and add your environment variables, including database connection strings and API keys for social logins.
 
 4. Start the application:
-   ```
-   npm start
-   ```
+    ```
+    npm start
+    ```
 
 ## Usage
 

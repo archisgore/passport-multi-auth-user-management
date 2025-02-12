@@ -1,38 +1,37 @@
-import express from "express";
-import userController from "../controllers/userController.js";
-import authController from "../controllers/authController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+import express from 'express'
+import userController from '../controllers/userController.js'
+import authMiddleware from '../middleware/authMiddleware.js'
 
-const router = express.Router();
+const router = express.Router()
 
 // Password change route
 router.post(
-  "/change-password",
-  authMiddleware.isAuthenticated,
-  authController.changePassword,
-);
+    '/change-password',
+    authMiddleware.isAuthenticated,
+    userController.changePassword
+)
 
 router.get(
-  "/change-password",
-  authMiddleware.isAuthenticated,
-  authController.renderChangePassword,
-);
+    '/change-password',
+    authMiddleware.isAuthenticated,
+    userController.renderChangePassword
+)
 
 // Route to view user profile
 router.get(
-  "/profile",
-  authMiddleware.isAuthenticated,
-  userController.viewProfile,
-);
+    '/profile',
+    authMiddleware.isAuthenticated,
+    userController.viewProfile
+)
 
 // Route to delete user profile
-router.delete(
-  "/profile",
-  authMiddleware.isAuthenticated,
-  userController.deleteProfile,
-);
+router.get(
+    '/profile/delete',
+    authMiddleware.isAuthenticated,
+    userController.deleteProfile
+)
 
 // Logout route
-router.get("/logout", authMiddleware.isAuthenticated, authController.logout);
+router.get('/logout', authMiddleware.isAuthenticated, userController.logout)
 
-export default router;
+export default router
