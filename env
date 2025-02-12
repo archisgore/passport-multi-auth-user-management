@@ -2,7 +2,7 @@
 PORT=3000
 SESSION_SECRET="foobar"
 SECURE_SESSION_COOKIE=false
-DATABASE_URL="postgres://archisgore"
+DATABASE_URL="postgres://somehost:5432/somedb"
 
 MAILGUN_SMTP_PORT=2535
 MAILGUN_SMTP_SERVER="not now Wesley!"
