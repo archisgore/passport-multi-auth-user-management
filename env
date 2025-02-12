@@ -1,0 +1,13 @@
+# You should REALLY update these in production (or even for your own testing)
+PORT=3000
+SESSION_SECRET="foobar"
+SECURE_SESSION_COOKIE=false
+DATABASE_URL="postgres://archisgore"
+
+MAILGUN_SMTP_PORT=2535
+MAILGUN_SMTP_SERVER="not now Wesley!"
+MAILGUN_API_KEY="foobar"
+MAILGUN_DOMAIN="hello world"
+MAILGUN_PUBLIC_KEY="lorem ipsum"
+MAILGUN_SMTP_LOGIN="darmok and jalad"
+MAILGUN_SMTP_PASSWORD="shaka when the walls fell"

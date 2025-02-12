@@ -2,6 +2,7 @@ import User from '../models/user.js'
 import passport from 'passport'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
+import nodemailer from 'nodemailer'
 
 const authController = {}
 // Sign up a new user
@@ -58,7 +59,7 @@ authController.forgotPassword = async (req, res) => {
 
         const token = crypto.randomBytes(20).toString('hex')
         user.resetPasswordToken = token
-        user.resetPasswordExpires = Date.now() + 3600000 // 1 hour
+        user.resetPasswordExpires = new Date(Date.now() + 3600000) // 1 hour
         await User.save(user)
 
         const transporter = nodemailer.createTransport({
