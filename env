@@ -4,6 +4,9 @@ SESSION_SECRET="foobar"
 SECURE_SESSION_COOKIE=false
 DATABASE_URL="postgres://somehost:5432/somedb"
 
+MAGIC_LINK_SECRET="lerooooy jenginsssss"
+EMAIL_LOGIN_FROM_ADDRESS="noreply@localhost"
+
 MAILGUN_SMTP_PORT=2535
 MAILGUN_SMTP_SERVER="not now Wesley!"
 MAILGUN_API_KEY="foobar"

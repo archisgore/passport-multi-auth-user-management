@@ -1,19 +1,24 @@
-const isAuthenticated = (req, res, next) => {
-    console.log('isAuthenticated', req.isAuthenticated())
+const authMiddleware = {
+  isAuthenticated: (req, res, next) => {
     if (req.isAuthenticated()) {
-        return next()
+      return next()
     }
     res.redirect('/auth/login')
-}
+  },
 
-const isNotAuthenticated = (req, res, next) => {
+  isEmailVerified: (req, res, next) => {
+    if (req.user && req.user.emailVerified) {
+      return next()
+    }
+    res.redirect('/user/verify-email')
+  },
+
+  isNotAuthenticated: (req, res, next) => {
     if (!req.isAuthenticated()) {
-        return next()
+      return next()
     }
     res.redirect('/user/profile')
+  }
 }
 
-export default {
-    isAuthenticated,
-    isNotAuthenticated,
-}
+export default authMiddleware

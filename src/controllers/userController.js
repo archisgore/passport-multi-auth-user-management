@@ -60,10 +60,16 @@ userController.changePassword = async (req, res) => {
     }
 }
 
+userController.renderVerifyEmail = (req, res) => {
+    res.render('verifyEmail', { user: req.user })
+}
+
 // Logout user
 userController.logout = (req, res) => {
-    req.logout()
-    res.redirect('/')
+    req.logout((err) => {
+      if (err) { return next(err); }
+      res.redirect('/');
+    })
 }
 
 export default userController

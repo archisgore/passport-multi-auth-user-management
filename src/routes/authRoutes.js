@@ -13,6 +13,11 @@ router.post('/login', authController.login)
 // Render login page
 router.get('/login', authController.renderLogin)
 
+// Login with email
+router.post('/login/email', authController.loginEmail)
+// Render email login form
+router.get('/login/email', authController.renderLoginEmail)
+
 // Password reset form route
 router.get('/forgot-password', authController.renderForgotPassword)
 // Forgot password email form

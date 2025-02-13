@@ -1,13 +1,11 @@
 import pool from '../config/database.js'
 
 const User = {
-    create: async ({ email, password }) => {
+    create: async ({ email, password, emailVerified }) => {
+        emailVerified = emailVerified || false
         const result = await pool.query(
-            'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
-            [
-                email,
-                password,
-            ]
+            'INSERT INTO users (email, password, email_verified) VALUES ($1, $2) RETURNING *',
+            [email, password, emailVerified]
         )
         return result.rows[0]
     },
@@ -45,14 +43,16 @@ const User = {
         const {
             id,
             email,
+            emailVerified,
             password,
             resetPasswordToken,
             resetPasswordExpires,
         } = user
         const result = await pool.query(
-            'UPDATE users SET email = $1, password = $2, reset_password_token = $3, reset_password_expires = $4, updated_at=$5::timestamptz WHERE id = $6 RETURNING *',
+            'UPDATE users SET email = $1, email_verified = $2, password = $3, reset_password_token = $4, reset_password_expires = $5, updated_at=$6::timestamptz WHERE id = $7 RETURNING *',
             [
                 email,
+                emailVerified,
                 password,
                 resetPasswordToken,
                 resetPasswordExpires,
@@ -60,6 +60,7 @@ const User = {
                 id,
             ]
         )
+        console.log("DB User:", result.rows[0])
         return result.rows[0]
     },
 }
