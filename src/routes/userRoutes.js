@@ -31,6 +31,8 @@ router.get(
     userController.deleteProfile
 )
 
+router.get('/verify-email', userController.renderVerifyEmail)
+
 // Logout route
 router.get('/logout', authMiddleware.isAuthenticated, userController.logout)
 

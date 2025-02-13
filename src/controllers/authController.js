@@ -137,15 +137,38 @@ authController.resetPassword = async (req, res) => {
 
 // Send Magic Link
 authController.loginEmail = async (req, res) => {
-    passport.authenticate('magiclink', {
+    const resp = passport.authenticate('magiclink', {
         action: 'requestToken',
-        failureRedirect: '/login'
+        failureRedirect: '/auth/login'
+    })(req, res, async (err) => {
+        if (err) {
+            console.error("Error during email login: ", err);
+            return res.status(500).send('Error during email login');
+        }
+        res.redirect("/auth/login/email/check");
     });
-    res.render("checkEmail", { email: req.body.email });
+
+}
+
+authController.renderCheckEmail = async (req, res) => {
+    res.render('checkEmail');
 }
 
 authController.renderLoginEmail = async (req, res) => {
     res.render('loginEmail')
+}
+
+authController.verifyEmail = async (req, res) => {
+    passport.authenticate('magiclink', {
+        successReturnToOrRedirect: '/user/profile',
+        failureRedirect: '/auth/login'
+      })(req, res, async (err) => {
+        if (err) {
+          console.error("Error during email link verification: ", err);
+          return res.status(500).send('Error during email link verification');
+        }
+        res.redirect("/");
+      })
 }
 
 export default authController

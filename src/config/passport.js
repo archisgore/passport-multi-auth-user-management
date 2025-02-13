@@ -62,17 +62,18 @@ function passportConfig(passport) {
         verifyUserAfterToken: true,
       },
       (user, token) => {
-        var link = 'http://localhost:3000/login/email/verify?token=' + token;
-        var msg = {
+        const link = 'http://localhost:3000/auth/login/email/verify?token=' + token;
+        const msg = {
           to: user.email,
           from: process.env.EMAIL_LOGIN_FROM_ADDRESS,
           subject: 'Login with Link',
           text: 'Hello! Click the link below to finish signing in.\r\n\r\n' + link,
           html: '<h3>Hello!</h3><p>Click the link below to finish signing in.</p><p><a href="' + link + '">Sign in</a></p>',
         };
-        return emailer.sendMail(msg)
+        return emailer.sendMail(msg);
       },
       async (user) => {
+        console.log("Magic Link Strategy verify called with user: ", user);
         const dbuser = await User.findByEmail(user.email)
         if (!dbuser) {
           const newDefaultPassword=generator.generate({ length: 20, numbers: true, symbols: true, lowercase: true, uppercase: true });
