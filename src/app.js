@@ -25,19 +25,21 @@ passportConfig(passport)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      // why the weird bool parsing: https://github.com/motdotla/dotenv/issues/51
-      secure: (process.env.SECURE_SESSION_COOKIE.toLocaleLowerCase().trim() !== 'false'), // Use secure cookies in production
-      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day in milliseconds
-    },
-    store: new pgSession({
-      pool: app.locals.dbConnectionPool, // Connection pool
-    }),
-  })
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            // why the weird bool parsing: https://github.com/motdotla/dotenv/issues/51
+            secure:
+                process.env.SECURE_SESSION_COOKIE.toLocaleLowerCase().trim() !==
+                'false', // Use secure cookies in production
+            maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day in milliseconds
+        },
+        store: new pgSession({
+            pool: app.locals.dbConnectionPool, // Connection pool
+        }),
+    })
 )
 app.use(passport.initialize())
 app.use(passport.session())
@@ -52,10 +54,10 @@ app.use('/user', authMiddleware.isAuthenticated, userRoutes)
 
 // Home route
 app.get('/', (req, res) => {
-  res.render('index')
+    res.render('index')
 })
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`)
+    console.log(`Server is running on http://localhost:${PORT}`)
 })

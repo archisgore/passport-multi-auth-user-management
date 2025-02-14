@@ -25,7 +25,16 @@ export default [
         },
 
         rules: {
-            'no-console': 'error',
+            'no-console': 'off',
+            'no-unused-vars': [
+                'error',
+                {
+                    reportUsedIgnorePattern: true,
+                    argsIgnorePattern: '^_',
+                    caughtErrors: 'all',
+                    caughtErrorsIgnorePattern: '^_',
+                },
+            ],
         },
     },
 ]

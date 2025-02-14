@@ -12,7 +12,10 @@ const authController = {
             if (password !== confirmPassword)
                 return res.status(400).send('Passwords do not match')
             const hashedPassword = await bcrypt.hash(password, 10)
-            const newUser = await User.create({ email, password: hashedPassword })
+            const newUser = await User.create({
+                email,
+                password: hashedPassword,
+            })
             req.login(newUser, (err) => {
                 if (err) return res.status(500).send('Login failed')
                 return res.redirect('/user/profile')
@@ -54,11 +57,15 @@ const authController = {
     forgotPassword: async (req, res) => {
         const { email } = req.body
         try {
-            const user = await User.findOne({eq: { email }})
-            if (!user) return res.status(404).send('If an account for this user exists, an email has been sent to ' +
-                user.email +
-                ' with further instructions.'
-            )
+            const user = await User.findOne({ eq: { email } })
+            if (!user)
+                return res
+                    .status(404)
+                    .send(
+                        'If an account for this user exists, an email has been sent to ' +
+                            user.email +
+                            ' with further instructions.'
+                    )
 
             const token = crypto.randomBytes(20).toString('hex')
             user.reset_password_token = token
@@ -78,12 +85,12 @@ const authController = {
             await emailer.sendMail(mailOptions)
             res.send(
                 'If an account for this user exists, an email has been sent to ' +
-                user.email +
-                ' with further instructions.'
+                    user.email +
+                    ' with further instructions.'
             )
         } catch (error) {
-            console.error('Error sending email:', error);
-            res.status(500).send('Error sending email');
+            console.error('Error sending email:', error)
+            res.status(500).send('Error sending email')
         }
     },
 
@@ -147,25 +154,24 @@ const authController = {
 
     // Send Magic Link
     loginEmail: async (req, res) => {
-        const resp = passport.authenticate('magiclink', {
+        passport.authenticate('magiclink', {
             action: 'requestToken',
-            failureRedirect: '/auth/login'
+            failureRedirect: '/auth/login',
         })(req, res, async (err) => {
             if (err) {
-                console.error("Error during email login: ", err);
-                return res.status(500).send('Error during email login');
+                console.error('Error during email login: ', err)
+                return res.status(500).send('Error during email login')
             }
-            res.redirect("/auth/login/email/check");
-        });
-
+            res.redirect('/auth/login/email/check')
+        })
     },
 
     renderCheckPasswordResetEmail: async (req, res) => {
-        res.render('checkPasswordResetEmail');
+        res.render('checkPasswordResetEmail')
     },
 
     renderCheckLoginEmail: async (req, res) => {
-        res.render('checkLoginEmail');
+        res.render('checkLoginEmail')
     },
 
     renderLoginEmail: async (req, res) => {
@@ -175,9 +181,9 @@ const authController = {
     verifyEmail: async (req, res) => {
         passport.authenticate('magiclink', {
             successReturnToOrRedirect: '/user/profile',
-            failureRedirect: '/auth/login'
+            failureRedirect: '/auth/login',
         })(req, res)
-    }
+    },
 }
 
 export default authController
