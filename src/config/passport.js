@@ -7,6 +7,7 @@ import User from '../models/user.js'
 import bcrypt from 'bcrypt'
 import emailer from './emailer.js'
 import generator from 'generate-password';
+import userController from '../controllers/userController.js'
 
 function passportConfig(passport) {
   passport.serializeUser((user, done) => {
@@ -16,6 +17,10 @@ function passportConfig(passport) {
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await User.findById(id)
+      if (!user) {
+        console.error("Session for user that does not exist: " + id);
+        return done(null, false)
+      }
       done(null, user)
     } catch (error) {
       done(error)
@@ -29,7 +34,7 @@ function passportConfig(passport) {
       },
       async (email, password, done) => {
         try {
-          const user = await User.findOne({ email })
+          const user = await User.findOne({eq: { email }})
           if (!user) {
             return done(null, false, {
               message: 'Incorrect email.',
@@ -73,15 +78,15 @@ function passportConfig(passport) {
         return emailer.sendMail(msg);
       },
       async (user) => {
-        console.log("Magic Link Strategy verify called with user: ", user);
-        const dbuser = await User.findByEmail(user.email)
+        var dbuser = await User.findByEmail(user.email)
         if (!dbuser) {
           const newDefaultPassword=generator.generate({ length: 20, numbers: true, symbols: true, lowercase: true, uppercase: true });
-          dbuser = User.create({ email: user.email, password: newDefaultPassword, emailVerified: true })
-        } else if (!dbuser.emailVerified) {
-          dbuser.emailVerified = true;
-          User.save(dbuser);
+          dbuser = await User.create({ email: user.email, password: newDefaultPassword, email_verified: true })
+        } else if (!dbuser.email_verified) {
+          dbuser.email_verified = true
+          await User.save(dbuser);
         }
+        return dbuser;
       }
     )
   )
@@ -93,7 +98,7 @@ passport.use(new GoogleStrategy({
   callbackURL: '/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    const user = await User.findOne({ email: profile.emails[0].value });
+    const user = await User.findOne({eq: { email: profile.emails[0].value }});
     if (user) {
       return done(null, user);
     }
@@ -115,7 +120,7 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'displayName', 'emails']
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    const user = await User.findOne({ email: profile.emails[0].value });
+    const user = await User.findOne({eq: { email: profile.emails[0].value }});
     if (user) {
       return done(null, user);
     }
@@ -138,7 +143,7 @@ passport.use(new AppleStrategy({
   callbackURL: '/auth/apple/callback'
 }, async (accessToken, refreshToken, idToken, profile, done) => {
   try {
-    const user = await User.findOne({ email: profile.email });
+    const user = await User.findOne({eq: { email: profile.email }});
     if (user) {
       return done(null, user);
     }

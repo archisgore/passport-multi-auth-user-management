@@ -18,7 +18,7 @@ router.post('/login/email', authController.loginEmail)
 // Render email login form
 router.get('/login/email', authController.renderLoginEmail)
 // Render email check page
-router.get('/login/email/check', authController.renderCheckEmail)
+router.get('/login/email/check', authController.renderCheckLoginEmail)
 // Render email check page
 router.get('/login/email/verify', authController.verifyEmail)
 

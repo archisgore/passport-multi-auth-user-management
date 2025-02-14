@@ -4,6 +4,8 @@ SESSION_SECRET="foobar"
 SECURE_SESSION_COOKIE=false
 DATABASE_URL="postgres://somehost:5432/somedb"
 
+FORGOT_PASSWORD_FROM_ADDRESS="noreply@localhost"
+
 MAGIC_LINK_SECRET="lerooooy jenginsssss"
 EMAIL_LOGIN_FROM_ADDRESS="noreply@localhost"
 

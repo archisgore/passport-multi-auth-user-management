@@ -23,8 +23,11 @@
         <p>Joined on: <%= user.created_at.toLocaleDateString() %>
         </p>
         <p><a href="/user/change-password" class="btn">Change Password</a></p>
-        <p>Clicking on this link will delete your profile without confirmation. Click only if you're sure: <a href="/user/profile/delete" class="btn">Delete Profile</a></p>
-    </main>
+        <p>Clicking on this button will delete your profile without confirmation.</p>
+        <form action="/user/profile/delete" method="POST">
+            <button type="submit">Delete Profile Permanently</button>
+        </form>
+</main>
     <footer>
         <p>&copy; <%= new Date().getFullYear() %> Your Application Name</p>
     </footer>

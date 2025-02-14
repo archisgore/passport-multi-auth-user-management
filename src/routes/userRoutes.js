@@ -25,7 +25,7 @@ router.get(
 )
 
 // Route to delete user profile
-router.get(
+router.post(
     '/profile/delete',
     authMiddleware.isAuthenticated,
     userController.deleteProfile
