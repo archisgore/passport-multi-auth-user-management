@@ -186,13 +186,17 @@ const authController = {
     },
 
     googleLogin: async (req, res) => {
-        return passport.authenticate('google', { scope: ['email'] })(req, res, (err) => {
-            if (err) {
-                console.error('Error during Google login: ', err)
-                return res.status(500).send('Error during Google login');
+        return passport.authenticate('google', { scope: ['email'] })(
+            req,
+            res,
+            (err) => {
+                if (err) {
+                    console.error('Error during Google login: ', err)
+                    return res.status(500).send('Error during Google login')
+                }
+                console.log('Logged in with Google successfully')
             }
-            console.log("Logged in with Google successfully");
-        })
+        )
     },
 
     googleLoginVerify: async (req, res) => {
@@ -202,9 +206,9 @@ const authController = {
         })(req, res, (err) => {
             if (err) {
                 console.error('Error during Google login: ', err)
-                return res.status(500).send('Error during Google login');
+                return res.status(500).send('Error during Google login')
             }
-            console.log("Logged in with Google successfully")
+            console.log('Logged in with Google successfully')
         })
     },
 }
