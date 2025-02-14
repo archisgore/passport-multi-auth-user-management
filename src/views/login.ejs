@@ -24,14 +24,26 @@
         </form>
         <div class="social-login">
             <h2>Or login with</h2>
-            <a href="/auth/login/email">Email Magic Link</a>
-        <!--
-            <a href="/auth/google">Google</a>
-            <a href="/auth/facebook">Facebook</a>
-            <a href="/auth/apple">Apple</a>
-            <a href="/auth/twitter">Twitter</a>
-        -->
-    </div>
+            <p>
+                <a href="/auth/login/email">Email Magic Link</a>
+            </p>
+            <p>
+            <% if (process.env.GOOGLE_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
+                <% } %>
+            </p>
+            <p>
+            <% if (process.env.FACEBOOK_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
+                <% } %>
+            </p>
+            <p>
+            <% if (process.env.APPLE_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
+                <% } %>
+            </p>
+            <p>
+            <% if (process.env.TWITTER_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
+                <% } %>
+            </p>
+        </div>
         <p>Don't have an account? <a href="/auth/signup">Sign up here</a></p>
         <p>Forgot your password? <a href="/auth/forgot-password">Reset here</a></p>
     </div>

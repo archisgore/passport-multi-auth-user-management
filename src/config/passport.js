@@ -6,8 +6,7 @@ import { Strategy as MagicLinkStrategy } from 'passport-magic-link'
 import User from '../models/user.js'
 import bcrypt from 'bcrypt'
 import emailer from './emailer.js'
-import generator from 'generate-password'
-import userController from '../controllers/userController.js'
+import generateNewPassword from '../lib/newPasswordGenerator.js'
 
 function passportConfig(passport) {
     passport.serializeUser((user, done) => {
@@ -87,16 +86,9 @@ function passportConfig(passport) {
             async (user) => {
                 var dbuser = await User.findByEmail(user.email)
                 if (!dbuser) {
-                    const newDefaultPassword = generator.generate({
-                        length: 20,
-                        numbers: true,
-                        symbols: true,
-                        lowercase: true,
-                        uppercase: true,
-                    })
                     dbuser = await User.create({
                         email: user.email,
-                        password: newDefaultPassword,
+                        password: generateNewPassword(),
                         email_verified: true,
                     })
                 } else if (!dbuser.email_verified) {
@@ -108,73 +100,103 @@ function passportConfig(passport) {
         )
     )
 
-    /*
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback'
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    const user = await User.findOne({eq: { email: profile.emails[0].value }});
-    if (user) {
-      return done(null, user);
+    if (process.env.GOOGLE_LOGIN === 'true') {
+        console.error('Google login is enabled')
+        passport.use(
+            new GoogleStrategy(
+                {
+                    clientID: process.env.GOOGLE_CLIENT_ID,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    callbackURL: '/auth/google/callback',
+                },
+                async (_accessToken, _refreshToken, profile, done) => {
+                    try {
+                        const user = await User.findOne({
+                            eq: { email: profile.emails[0].value },
+                        })
+                        if (user) {
+                            return done(null, user)
+                        }
+                        const newUser = await User.create({
+                            email: profile.emails[0].value,
+                            password: generateNewPassword(),
+                            email_verified: true,
+                        })
+                        done(null, newUser)
+                    } catch (error) {
+                        done(error)
+                    }
+                }
+            )
+        )
     }
-    const newUser = await User.create({
-      email: profile.emails[0].value,
-      name: profile.displayName,
-      googleId: profile.id
-    });
-    done(null, newUser);
-  } catch (error) {
-    done(error);
-  }
-}));
- 
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: '/auth/facebook/callback',
-  profileFields: ['id', 'displayName', 'emails']
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    const user = await User.findOne({eq: { email: profile.emails[0].value }});
-    if (user) {
-      return done(null, user);
+
+    if (process.env.FACEBOOK_LOGIN === 'true') {
+        console.error('Facebook login is not supported yet')
+        throw new Error('Facebook login is not supported yet')
+        passport.use(
+            new FacebookStrategy(
+                {
+                    clientID: process.env.FACEBOOK_APP_ID,
+                    clientSecret: process.env.FACEBOOK_APP_SECRET,
+                    callbackURL: '/auth/facebook/callback',
+                    profileFields: ['id', 'displayName', 'emails'],
+                },
+                async (accessToken, refreshToken, profile, done) => {
+                    try {
+                        const user = await User.findOne({
+                            eq: { email: profile.emails[0].value },
+                        })
+                        if (user) {
+                            return done(null, user)
+                        }
+                        const newUser = await User.create({
+                            email: profile.emails[0].value,
+                            name: profile.displayName,
+                            facebookId: profile.id,
+                        })
+                        done(null, newUser)
+                    } catch (error) {
+                        done(error)
+                    }
+                }
+            )
+        )
     }
-    const newUser = await User.create({
-      email: profile.emails[0].value,
-      name: profile.displayName,
-      facebookId: profile.id
-    });
-    done(null, newUser);
-  } catch (error) {
-    done(error);
-  }
-}));
- 
-passport.use(new AppleStrategy({
-  clientID: process.env.APPLE_CLIENT_ID,
-  teamID: process.env.APPLE_TEAM_ID,
-  keyID: process.env.APPLE_KEY_ID,
-  privateKey: process.env.APPLE_PRIVATE_KEY,
-  callbackURL: '/auth/apple/callback'
-}, async (accessToken, refreshToken, idToken, profile, done) => {
-  try {
-    const user = await User.findOne({eq: { email: profile.email }});
-    if (user) {
-      return done(null, user);
+
+    if (process.env.APPLE_LOGIN === 'true') {
+        console.error('Apple login is not supported yet')
+        throw new Error('Apple login is not supported yet')
+        passport.use(
+            new AppleStrategy(
+                {
+                    clientID: process.env.APPLE_CLIENT_ID,
+                    teamID: process.env.APPLE_TEAM_ID,
+                    keyID: process.env.APPLE_KEY_ID,
+                    privateKey: process.env.APPLE_PRIVATE_KEY,
+                    callbackURL: '/auth/apple/callback',
+                },
+                async (accessToken, refreshToken, idToken, profile, done) => {
+                    try {
+                        const user = await User.findOne({
+                            eq: { email: profile.email },
+                        })
+                        if (user) {
+                            return done(null, user)
+                        }
+                        const newUser = await User.create({
+                            email: profile.email,
+                            name: profile.name,
+                            appleId: profile.id,
+                        })
+                        done(null, newUser)
+                    } catch (error) {
+                        done(error)
+                    }
+                }
+            )
+        )
     }
-    const newUser = await User.create({
-      email: profile.email,
-      name: profile.name,
-      appleId: profile.id
-    });
-    done(null, newUser);
-  } catch (error) {
-    done(error);
-  }
-}));
-*/
 }
 
 export default passportConfig

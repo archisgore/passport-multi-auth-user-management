@@ -35,4 +35,10 @@ router.post('/reset-password/:token', authController.resetPassword)
 // Views
 router.get('/signup', authController.renderSignup)
 
+if (process.env.GOOGLE_LOGIN === 'true') {
+    router.get('/google', authController.googleLogin)
+
+    router.get('/google/callback', authController.googleLoginVerify)
+}
+
 export default router

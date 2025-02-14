@@ -16,3 +16,9 @@ MAILGUN_DOMAIN="hello world"
 MAILGUN_PUBLIC_KEY="lorem ipsum"
 MAILGUN_SMTP_LOGIN="darmok and jalad"
 MAILGUN_SMTP_PASSWORD="shaka when the walls fell"
+
+
+# set this to true, and the client id + secret will be used to enable google oauth login for this app
+GOOGLE_LOGIN=false
+GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
+GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
