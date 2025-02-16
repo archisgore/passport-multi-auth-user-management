@@ -1,5 +1,6 @@
 const authMiddleware = {
     isAuthenticated: (req, res, next) => {
+        //console.log('req.isAuthenticated()', req.isAuthenticated(), " Req User:", req.user);
         if (req.isAuthenticated()) {
             return authMiddleware.isEmailVerified(req, res, next)
         }
@@ -8,6 +9,7 @@ const authMiddleware = {
 
     isEmailVerified: (req, res, next) => {
         // If user is authenticated and either email is verified or the current path is to verify email, continue
+        //console.log('req.user.email_verified', req.user.email_verified);
         if (
             req.user &&
             (req.user.email_verified || req.path.endsWith('/verify-email'))

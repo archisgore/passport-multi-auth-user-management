@@ -2,13 +2,17 @@ import express from 'express'
 import session from 'express-session'
 import passport from 'passport'
 import bodyParser from 'body-parser'
-import pool from './config/database.js'
+import { default as pool, initDatabaseSchema } from './config/database.js'
 import passportConfig from './config/passport.js'
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import 'dotenv/config.js'
 import authMiddleware from './middleware/authMiddleware.js'
 import connectPgSimple from 'connect-pg-simple'
+
+import fs from 'fs'
+import http from 'http'
+import https from 'https'
 
 const pgSession = connectPgSimple(session)
 
@@ -17,6 +21,12 @@ const PORT = process.env.PORT || 3000
 
 // Connect to the database
 app.locals.dbConnectionPool = pool
+
+// Initialize the database schema if init file is provided
+if (process.env.INIT_DATABASE_SCHEMA_FILE) {
+    // Wait until db is inited before proceeding
+    initDatabaseSchema(process.env.INIT_DATABASE_SCHEMA_FILE)
+}
 
 // Passport configuration
 passportConfig(passport)
@@ -38,6 +48,7 @@ app.use(
         },
         store: new pgSession({
             pool: app.locals.dbConnectionPool, // Connection pool
+            createTableIfMissing: true, // Automatically create session table if not exists
         }),
     })
 )
@@ -57,7 +68,29 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`)
+// Serve
+const httpServer = http.createServer(app)
+httpServer.listen(PORT, () => {
+    console.log(`HTTP Server is running on http://localhost:${PORT}`)
 })
+
+if (process.env.HTTPS_ENABLE === 'true') {
+    console.log('Https endpoint requested...')
+    const HTTPS_PORT = process.env.HTTPS_PORT || 3443
+    const privateKey = fs.readFileSync(
+        process.env.HTTPS_PRIVATE_KEY_PATH,
+        'utf8'
+    )
+    const certificate = fs.readFileSync(process.env.HTTPS_CERT_PATH, 'utf8')
+    const credentials = {
+        key: privateKey,
+        cert: certificate,
+        passphrase: process.env.HTTPS_PASSPHRASE,
+    }
+    const httpsServer = https.createServer(credentials, app)
+    httpsServer.listen(HTTPS_PORT, () => {
+        console.log(
+            `HTTPS Server is running on https://localhost:${HTTPS_PORT}`
+        )
+    })
+}

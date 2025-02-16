@@ -32,15 +32,11 @@
                 <% } %>
             </p>
             <p>
-            <% if (process.env.FACEBOOK_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
+            <% if (process.env.FACEBOOK_LOGIN==='true' ) { %> <a href="/auth/facebook">Facebook</a>
                 <% } %>
             </p>
             <p>
-            <% if (process.env.APPLE_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
-                <% } %>
-            </p>
-            <p>
-            <% if (process.env.TWITTER_LOGIN==='true' ) { %> <a href="/auth/google">Google</a>
+            <% if (process.env.APPLE_LOGIN==='true' ) { %> <a href="/auth/apple">Apple</a>
                 <% } %>
             </p>
         </div>

@@ -41,4 +41,10 @@ if (process.env.GOOGLE_LOGIN === 'true') {
     router.get('/google/callback', authController.googleLoginVerify)
 }
 
+if (process.env.APPLE_LOGIN === 'true') {
+    router.get('/apple', authController.appleLogin)
+
+    router.post('/apple/callback', authController.appleLoginVerify)
+}
+
 export default router

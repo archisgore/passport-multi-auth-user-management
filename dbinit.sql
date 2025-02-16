@@ -1,22 +1,13 @@
--- For express-postgres session storage
-CREATE TABLE "session" (
-  "sid" varchar NOT NULL COLLATE "default",
-  "sess" json NOT NULL,
-  "expire" timestamp(6) NOT NULL
-)
-WITH (OIDS=FALSE);
-
-ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
-
-CREATE INDEX "IDX_session_expire" ON "session" ("expire");
-
-
 -- For user management
 CREATE TABLE
-    users (
+    IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         email_verified BOOLEAN DEFAULT FALSE,
+        apple_id VARCHAR(255) UNIQUE,
+        google_id VARCHAR(255) UNIQUE,
+        facebook_id VARCHAR(255) UNIQUE,
+        twitter_id VARCHAR(255) UNIQUE,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP
         WITH

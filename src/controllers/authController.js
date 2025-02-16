@@ -194,7 +194,7 @@ const authController = {
                     console.error('Error during Google login: ', err)
                     return res.status(500).send('Error during Google login')
                 }
-                console.log('Logged in with Google successfully')
+                console.log('Handed off to Google for login successfully')
             }
         )
     },
@@ -209,6 +209,43 @@ const authController = {
                 return res.status(500).send('Error during Google login')
             }
             console.log('Logged in with Google successfully')
+        })
+    },
+
+    appleLogin: async (req, res) => {
+        return passport.authenticate('apple')(req, res, (err) => {
+            if (err) {
+                console.error('Error during Apple login: ', err)
+                return res.status(500).send('Error during Apple login')
+            }
+            //console.log('Handed off to Apple for login successfully')
+        })
+    },
+
+    appleLoginVerify: async (req, res) => {
+        console.log('Post Apple callback...')
+        passport.authenticate('apple', {
+            failureRedirect: '/login',
+            successReturnToOrRedirect: '/',
+        })(req, res, (err) => {
+            if (err) {
+                console.error('Apple Auth Error: ', err, ' stack: ', err.stack)
+                if (err == 'AuthorizationError') {
+                    res.send(
+                        'Oops! Looks like you didn\'t allow the app to proceed. Please sign in again! <br /> \
+                        <a href="/auth/apple/login">Sign in with Apple</a>'
+                    )
+                } else if (err == 'TokenError') {
+                    res.send(
+                        'Oops! Couldn\'t get a valid token from Apple\'s servers! <br /> \
+                        <a href="/auth/apple/login">Sign in with Apple</a>'
+                    )
+                } else {
+                    res.send(err)
+                }
+                console.log('Logged in with Apple successfully')
+                //res.redirect('/user/profile')
+            }
         })
     },
 }

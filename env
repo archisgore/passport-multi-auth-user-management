@@ -3,6 +3,16 @@ PORT=3000
 SESSION_SECRET="foobar"
 SECURE_SESSION_COOKIE=false
 DATABASE_URL="postgres://somehost:5432/somedb"
+# If set, will execute all commands from this SQL file on startup
+INIT_DATABASE_SCHEMA_FILE="dbinit.sql"
+# If set, also serve an HTTPS endpoint locally - usually helpful in conjunction with
+# /etc/hosts file to test Social Logins, especially Apple which does not allow
+# a localhost callback and requires redirect URLs be HTTPS-only
+HTTPS_ENABLE=false
+HTTPS_PORT=3443
+HTTPS_CERT_PATH="YOUR_HTTPS_CERT_PATH"
+HTTPS_PRIVATE_KEY_PATH="YOUR_HTTPS_PRIVATE_KEY_PATH"
+HTTPS_PASSPHRASE="YOUR_HTTPS_PASSPHRASE"
 
 FORGOT_PASSWORD_FROM_ADDRESS="noreply@localhost"
 
@@ -22,3 +32,12 @@ MAILGUN_SMTP_PASSWORD="shaka when the walls fell"
 GOOGLE_LOGIN=false
 GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
 GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
+
+# set this to true, and the client id + secret will be used to enable Sigin With Apple login for this app
+APPLE_LOGIN=false
+# see https://github.com/ananay/apple-auth/blob/master/SETUP.md for what to fill in here
+APPLE_CLIENT_ID="YOUR_APPLE_CLIENT_ID"
+APPLE_TEAM_ID="YOUR_APPLE_TEAM_ID"
+APPLE_KEY_ID="YOUR_APPLE_KEY_ID"
+APPLE_PRIVATE_KEY_PATH="YOUR_APPLE_PRIVATE_KEY_PATH"
+

@@ -7,9 +7,12 @@ import User from '../models/user.js'
 import bcrypt from 'bcrypt'
 import emailer from './emailer.js'
 import generateNewPassword from '../lib/newPasswordGenerator.js'
+import fs from 'fs'
+import jwt from 'jsonwebtoken'
 
 function passportConfig(passport) {
     passport.serializeUser((user, done) => {
+        //console.log("Serializing user: ", user, " user.id: ", user.id);
         done(null, user.id)
     })
 
@@ -20,6 +23,7 @@ function passportConfig(passport) {
                 console.error('Session for user that does not exist: ' + id)
                 return done(null, false)
             }
+            //console.log("Deserialized user by id: ", id, " User: ", user);
             done(null, user)
         } catch (error) {
             done(error)
@@ -110,20 +114,39 @@ function passportConfig(passport) {
                     callbackURL: '/auth/google/callback',
                 },
                 async (_accessToken, _refreshToken, profile, done) => {
+                    //console.log("Google Login profile: ", profile);
                     try {
-                        const user = await User.findOne({
-                            eq: { email: profile.emails[0].value },
+                        // look for user with google id
+                        var user = await User.findOne({
+                            eq: { google_id: profile.id },
                         })
-                        if (user) {
-                            return done(null, user)
+                        // if not look for user with the same email
+                        if (!user) {
+                            user = await User.findOne({
+                                eq: { email: profile.emails[0].value },
+                            })
                         }
-                        const newUser = await User.create({
-                            email: profile.emails[0].value,
-                            password: generateNewPassword(),
-                            email_verified: true,
-                        })
-                        done(null, newUser)
+                        // if not, create a user with the same email
+                        if (!user) {
+                            user = await User.create({
+                                email: profile.emails[0].value,
+                                password: generateNewPassword(),
+                                email_verified: profile.emails[0].verified,
+                            })
+                        }
+
+                        if (!user.email_verified || !user.google_id) {
+                            user.email_verified = profile.emails[0].verified
+                            user.google_id = profile.id
+                            await User.save(user)
+                        }
+                        done(null, user)
                     } catch (error) {
+                        console.log(
+                            'Error when Google Login: ',
+                            error,
+                            error.stack
+                        )
                         done(error)
                     }
                 }
@@ -165,32 +188,70 @@ function passportConfig(passport) {
     }
 
     if (process.env.APPLE_LOGIN === 'true') {
-        console.error('Apple login is not supported yet')
-        throw new Error('Apple login is not supported yet')
+        console.log('Apple login is enabled')
+
+        if (!fs.existsSync(process.env.APPLE_PRIVATE_KEY_PATH)) {
+            throw new Error(
+                'Apple private key file not found at: ' +
+                    process.env.APPLE_PRIVATE_KEY_PATH +
+                    '. Apple Login will silently fail.'
+            )
+        }
         passport.use(
             new AppleStrategy(
                 {
                     clientID: process.env.APPLE_CLIENT_ID,
                     teamID: process.env.APPLE_TEAM_ID,
                     keyID: process.env.APPLE_KEY_ID,
-                    privateKey: process.env.APPLE_PRIVATE_KEY,
+                    privateKeyLocation: process.env.APPLE_PRIVATE_KEY_PATH,
                     callbackURL: '/auth/apple/callback',
                 },
-                async (accessToken, refreshToken, idToken, profile, done) => {
+                async (
+                    _req,
+                    _accessToken,
+                    _refreshToken,
+                    idToken,
+                    _profile,
+                    done
+                ) => {
+                    const decodedIdToken = jwt.decode(idToken)
+                    //console.log("Verifying Apple Auth...", idToken, "profile: ", profile, " decoded _idToken: ", decodedIdToken);
                     try {
-                        const user = await User.findOne({
-                            eq: { email: profile.email },
+                        // Look for user with this apple id
+                        var user = await User.findOne({
+                            eq: { apple_id: decodedIdToken.sub },
                         })
-                        if (user) {
-                            return done(null, user)
+
+                        if (!user) {
+                            // if not, find a user with this email
+                            user = await User.findOne({
+                                eq: { email: decodedIdToken.email },
+                            })
                         }
-                        const newUser = await User.create({
-                            email: profile.email,
-                            name: profile.name,
-                            appleId: profile.id,
-                        })
-                        done(null, newUser)
+
+                        // if not, create a new user
+                        if (!user) {
+                            user = await User.create({
+                                email: decodedIdToken.email,
+                                password: generateNewPassword(),
+                                email_verified: decodedIdToken.email_verified,
+                            })
+                        }
+
+                        if (!user.email_verified || !user.apple_id) {
+                            user.email_verified = decodedIdToken.email_verified
+                            user.apple_id = decodedIdToken.sub
+                            await User.save(user)
+                        }
+
+                        //console.log("Apple User logged in: ", user);
+                        done(null, user)
                     } catch (error) {
+                        console.log(
+                            'Error when Apple Login: ',
+                            error,
+                            error.stack
+                        )
                         done(error)
                     }
                 }
