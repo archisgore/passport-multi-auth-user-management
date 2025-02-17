@@ -9,7 +9,6 @@ import emailer from './emailer.js'
 import generateNewPassword from '../lib/newPasswordGenerator.js'
 import fs from 'fs'
 import jwt from 'jsonwebtoken'
-import 'dotenv/config.js'
 
 function passportConfig(passport) {
     passport.serializeUser((user, done) => {
