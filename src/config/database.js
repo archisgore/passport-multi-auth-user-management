@@ -1,11 +1,20 @@
 import pg from 'pg'
 const { Pool } = pg
 import fs from 'node:fs'
+import 'dotenv/config.js'
 
 const connectionString = process.env.DATABASE_URL
-const pool = new Pool({
+const config = {
     connectionString,
-})
+}
+if (process.env.DATABASE_SSL_REQUIRED === 'true') {
+    config.ssl = {
+        require: true,
+        rejectUnauthorized: true,
+    }
+}
+//console.log(config)
+const pool = new Pool(config)
 
 try {
     await pool.connect()
@@ -29,12 +38,10 @@ export async function initDatabaseSchema(initSqlFilePath) {
     for (const sql of sqls) {
         //console.log("Executing the following SQL to initialize schema in database: ", sql);
         try {
-            await pool
-                .query(sql)
-            console.log('Executed SQL successfully');
+            await pool.query(sql)
+            console.log('Executed SQL successfully')
         } catch (err) {
-            throw new Error(
-                `Error executing SQL ${err.stack} for SQL: ${sql}`)
+            throw new Error(`Error executing SQL ${err.stack} for SQL: ${sql}`)
         }
     }
     console.log('Complete Schema initialized successfully')

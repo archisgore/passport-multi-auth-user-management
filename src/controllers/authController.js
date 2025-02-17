@@ -3,6 +3,7 @@ import passport from 'passport'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import emailer from '../config/emailer.js'
+import 'dotenv/config.js'
 
 const authController = {
     // Sign up a new user
