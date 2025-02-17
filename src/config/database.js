@@ -1,6 +1,7 @@
 import pg from 'pg'
 const { Pool } = pg
 import fs from 'node:fs'
+import 'dotenv/config.js'
 
 const connectionString = process.env.DATABASE_URL
 const pool = new Pool({
