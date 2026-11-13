@@ -1,7 +1,6 @@
 import express from 'express'
 import session from 'express-session'
 import passport from 'passport'
-import bodyParser from 'body-parser'
 import { default as pool, initDatabaseSchema } from './config/database.js'
 import passportConfig from './config/passport.js'
 import authRoutes from './routes/authRoutes.js'
@@ -32,8 +31,8 @@ if (process.env.INIT_DATABASE_SCHEMA_FILE) {
 passportConfig(passport)
 
 // Middleware
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 app.use(
     session({
         secret: process.env.SESSION_SECRET,

@@ -12,7 +12,9 @@ try {
     await pool.connect()
     console.log('Connected to database')
 } catch (err) {
-    throw new Error(`Error connecting to database ${err.stack}`)
+    throw new Error(`Error connecting to database ${err.stack}`, {
+        cause: err,
+    })
 }
 
 export default pool
@@ -35,7 +37,9 @@ export async function initDatabaseSchema(initSqlFilePath) {
             console.log('Executed SQL successfully');
         } catch (err) {
             throw new Error(
-                `Error executing SQL ${err.stack} for SQL: ${sql}`)
+                `Error executing SQL ${err.stack} for SQL: ${sql}`,
+                { cause: err }
+            )
         }
     }
     console.log('Complete Schema initialized successfully')

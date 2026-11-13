@@ -158,6 +158,7 @@ function passportConfig(passport) {
     if (process.env.FACEBOOK_LOGIN === 'true') {
         console.error('Facebook login is not supported yet')
         throw new Error('Facebook login is not supported yet')
+        // eslint-disable-next-line no-unreachable
         passport.use(
             new FacebookStrategy(
                 {
